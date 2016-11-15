@@ -29,22 +29,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>An interview code quiz an InfoSys client gave me.</p>
+ * <p>An interview code quiz. Count how many times each word is found in a document as well as the number of anagrams of
+ * each word.</p>
  *
  * Constraints:
  * <ul>
- *     <li>I assumed that "greater or equal" is valid for positive and negative integer values of n, but only positive
- *     integer values of the power of two integer.</li>
- *     <li>I assumed that the goal is to demonstrate the implementation of the fastest algorithm for finding the result,
- *     not to demonstrate the fastest speed to read and process large files. Due to this, the implementation is
- *     performance constrained by disk IO.</li>
+ *     <li>The document is not exceptionally large (n will not be large).</li>
  *     <li>I assumed that user friendly error messages, comments, and test code are a non-goal, though I did include a
  *     couple of these.</li>
  * </ul>
  *
- * The algorithm I used can be found at this link on <a href="https://en.wikipedia.org/wiki/Power_of_two#Fast_algorithms_to_round_any_integer_to_a_multiple_of_a_given_power_of_two">Wikipedia</a>.
- *
- * @author PineForest (see https://github.com/PineForest) 9/25/2015
+ * @author PineForest (see https://github.com/PineForest) 10/10/2016
  */
 public class CountUniqueWordsAndAnagrams {
     private static Pattern WORD_CAPTURE_GROUP = Pattern.compile("\\b(\\S+)\\b");
@@ -53,7 +48,7 @@ public class CountUniqueWordsAndAnagrams {
     private Map<String,Integer> words = new HashMap<>();
     private Map<String,Integer> anagrams = new HashMap<>();
 
-    public void readFile(String filepath) throws IOException {
+    private void readFile(String filepath) throws IOException {
         InputStream fis = Files.newInputStream(FileSystems.getDefault().getPath(filepath));
         InputStreamReader fisr = new InputStreamReader(fis, "UTF-8");
         while (fisr.ready()) {
@@ -62,7 +57,7 @@ public class CountUniqueWordsAndAnagrams {
         }
     }
 
-    public void generateCounts() {
+    private void generateCounts() {
         Matcher wordMatcher = WORD_CAPTURE_GROUP.matcher(contents);
         while (wordMatcher.find()) {
             String base = wordMatcher.group().toLowerCase();
@@ -84,13 +79,6 @@ public class CountUniqueWordsAndAnagrams {
         return new String(array);
     }
 
-    public static void main( String[] args ) throws IOException {
-        CountUniqueWordsAndAnagrams counter = new CountUniqueWordsAndAnagrams();
-        counter.readFile(args[0]);
-        counter.generateCounts();
-        counter.writeCounts(System.out);
-    }
-
     private void writeCounts(PrintStream out) {
         for (String word : words.keySet()) {
             String sorted = sort(word);
@@ -98,5 +86,12 @@ public class CountUniqueWordsAndAnagrams {
         }
         out.println();
         out.flush();
+    }
+
+    public static void main( String[] args ) throws IOException {
+        CountUniqueWordsAndAnagrams counter = new CountUniqueWordsAndAnagrams();
+        counter.readFile(args[0]);
+        counter.generateCounts();
+        counter.writeCounts(System.out);
     }
 }
